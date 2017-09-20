@@ -1,9 +1,26 @@
+#!/usr/bin/env python
 # pylint: disable=no-member
 import numpy as np
 import functools
 
-def evaluate(individual):
-    return np.sum(individual)
+def evaluateOrderOne(vector):
+    return np.sum(vector)
+
+def evaluateOrderThree(vector):
+    tmp = np.sum(vector)
+    if tmp == 3:
+        return 30
+    elif tmp == 2:
+        return 0
+    elif tmp == 0:
+        return 28
+    else:
+        if vector[0]==1 :
+            return 14
+        elif vector[1] == 1:
+            return 22
+        elif vector[2] == 1:
+            return 26
 
 
 def bitflip_mutation(bit, probability):
@@ -15,18 +32,6 @@ def bitflip_mutation(bit, probability):
     else:
         return bit
 
-def parent_selection(P,d,e,f,g):
-    a = -1
-    b = -1
-    if evaluate(P[d])>evaluate(P[e]):
-        a = d
-    else:
-        a = e
-    if evaluate(P[f]) > evaluate(P[g]):
-        b = f
-    else:
-        b = g
-    return (a,b)
 
 def uniform_crossover(P,D,i1,i2):
     u = np.empty((D,))
@@ -39,11 +44,11 @@ def geAlgorithm():
  
     n = 0
     t = 1
-    D = 50
+    D = 24
     mu = 20
     pm = 1/D # mutation rate
     lambda_ = 30
-
+    evaluate = evaluateOrderOne
     # Algorithm 2: The initialization procedure of the population
     P = list()
     result = list()
@@ -51,7 +56,6 @@ def geAlgorithm():
         P.append(np.random.choice(np.array([0,1]),(D,)))
 
     terminate = False
-
     x_bsf = None
     value_bsf = 0
 
@@ -61,10 +65,7 @@ def geAlgorithm():
         if(value>value_bsf):
             value_bsf = value
             x_bsf = v
-        
-
-
-
+    
     while(not terminate):
         Q = list()
         for i in range(lambda_):
@@ -84,8 +85,10 @@ def geAlgorithm():
             newvalue = evaluate(u)
             # print("New value:" + str(newvalue))
             n += 1
-            # Step5: Update bsf solution
             new_value = evaluate(u)
+            
+            # Step5: Update bsf solution
+            
             if(new_value >value_bsf):
                 value_bsf = value
                 x_bsf = u
@@ -103,7 +106,7 @@ def geAlgorithm():
 
 if __name__ == "__main__":
     count = list()
-    totaltimes = 20
+    totaltimes = 1
     for i in range(totaltimes):
         count.append(geAlgorithm())
     print("Average # of generations %f" % (sum(count)/float(totaltimes)))
