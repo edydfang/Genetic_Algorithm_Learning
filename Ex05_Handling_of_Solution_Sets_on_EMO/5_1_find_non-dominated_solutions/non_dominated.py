@@ -20,12 +20,14 @@ def filter_solutions(solution_set):
     dominated: there is one solution larger than it in every component
     '''
     tmp_set = solution_set.copy()
-    is_efficient = np.ones(tmp_set.shape[0], dtype=bool)
+    is_non_dominated = np.ones(tmp_set.shape[0], dtype=bool)
     for idx, vector in enumerate(tmp_set):
+        # first find the solutions that dominate the current one
         intermid = np.all(tmp_set > vector, axis=1)
-        is_efficient[idx] = not np.any(intermid)
+        # if exists the dominator, then not non-dominated
+        is_non_dominated[idx] = not np.any(intermid)
         #tmp_set = np.delete(tmp_set, np.where(intermid), axis=0)
-    return is_efficient
+    return is_non_dominated
 
 def output_nondominated(filename):
     '''
